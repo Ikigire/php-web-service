@@ -19,8 +19,20 @@ switch ($request_method) {
         $usuarios = $usuarioRepo->getAllUsuarios();
         echo json_encode($usuarios);
         break;
+
+    case 'POST':
+        # code...
+        break;
+
+    case 'PUT':
+        # code...
+        break;
+
+    case 'DELETE':
+        # code...
+        break;
     
-    default:
+    default://Este va a reaccionar cono si fuera verbo OPTIONS
         # code...
         break;
 }
