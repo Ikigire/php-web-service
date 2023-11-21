@@ -10,7 +10,7 @@
             break;
         
         case 'usuarios':
-            require_once("");
+            require_once("./v-1/usuarios/controller/usuarios.restcontroller.php");
             break;
 
         case 'auth':
