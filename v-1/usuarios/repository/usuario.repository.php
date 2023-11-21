@@ -71,19 +71,19 @@ class UsuarioRepository
         return $usuarios;
     }
 
-    public function getUsuarioById($id): Usuario {
+    public function getUsuarioById(int $id): Usuario {
 
     }
 
-    public function createUsuario($usuario): Usuario {
+    public function createUsuario(Usuario $usuario): Usuario {
 
     }
 
-    public function editUsuario($usuario): Usuario {
+    public function editUsuario(Usuario $usuario): Usuario {
 
     }
 
-    public function deleteUsario($id): Usuario {
+    public function deleteUsario(int $id): Usuario {
 
     }
 }
