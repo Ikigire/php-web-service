@@ -21,7 +21,37 @@ switch ($request_method) {
         break;
 
     case 'POST':
-        # code...
+        $fieldsRequired = ['nombre', 'email', 'password'];
+
+        //Definir variables
+        $nombre = '';
+        $email = '';
+        $password = '';
+
+        $json = file_get_contents('php://input');
+        $entrada = json_decode($json, true);
+        
+        if ($entrada == null){
+            header(HTTP_CODE_400);
+            break;
+        }
+
+        foreach ($fieldsRequired as $key => $value) {
+            if ( !isset($entrada[$value]) ){
+                header(HTTP_CODE_400);
+                exit();
+            }
+            $$value = $entrada[$value];
+            // // $nombre = 
+            // // $email = 
+            // // $password = 
+        }
+        $usuario = $usuarioRepo->createUsuario(
+            $nombre, 
+            $email, 
+            $password
+        );
+        echo json_encode($usuario);
         break;
 
     case 'PUT':

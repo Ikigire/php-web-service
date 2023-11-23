@@ -19,7 +19,8 @@ class UsuarioRepository
         $this->createTable();
     }
 
-    public static function getInstance(): UsuarioRepository {
+    public static function getInstance(): UsuarioRepository
+    {
         $class = static::class;
         if (!isset($_intance[$class])) {
             $_intance[$class] = new static();
@@ -28,11 +29,13 @@ class UsuarioRepository
         return $_intance[$class];
     }
 
-    public function getMysqli(): mysqli {
+    public function getMysqli(): mysqli
+    {
         return $this->mysqli;
     }
 
-    private function createTable(): void {
+    private function createTable(): void
+    {
         $table = $this::$TABLENAME;
         $query = "
             CREATE TABLE IF NOT EXISTS $table(
@@ -52,13 +55,14 @@ class UsuarioRepository
         $sentencia->close();
     }
 
-    public function getAllUsuarios(): array {
+    public function getAllUsuarios(): array
+    {
         $query = "SELECT * FROM {$this::$TABLENAME}";
 
         $sentencia = $this->mysqli->prepare($query);
 
         $usuarios = array();
-        
+
         $sentencia->execute();
 
         $sentencia->bind_result($id, $nombre, $email, $password);
@@ -72,18 +76,60 @@ class UsuarioRepository
     }
 
     public function getUsuarioById(int $id): Usuario {
+        $query = "SELECT * FROM {$this::$TABLENAME} WHERE id_usuario = ?";
 
+        $sentencia = $this->mysqli->prepare($query);
+        $sentencia->bind_param(
+            "i",
+            $id
+        );
+
+        if ( !$sentencia->execute() ){
+            return null;
+        }
+
+        $sentencia->bind_result($id, $nombre, $email, $password);
+
+        if ( !$sentencia->fetch() ){
+            return null;
+        }
+        $usuario = new Usuario($id, $nombre, $email, $password);
+        
+        return $usuario;
     }
 
-    public function createUsuario(Usuario $usuario): Usuario {
+    public function createUsuario(string $nombre, string $email, string $password ): Usuario{
+        $this->mysqli->begin_transaction();
+        $query = 
+        "INSERT INTO {$this::$TABLENAME}
+            (nombre, email, password) 
+        VALUES( ? , ? , ?)";
 
+        $sentencia = $this->mysqli->prepare($query);
+
+        $sentencia->bind_param(
+            "sss", 
+            $nombre, 
+            $email, 
+            $password
+        );
+
+        if (!$sentencia->execute()) {
+            $this->mysqli->rollback();
+            return null;
+        }
+        $newUsuario = new Usuario(-1, $nombre, $email, $password);
+
+        $newUsuario->setIdUsuario($this->mysqli->insert_id);
+        $this->mysqli->commit();
+        return $newUsuario;
     }
 
-    public function editUsuario(Usuario $usuario): Usuario {
-
+    public function editUsuario(Usuario $usuario): void
+    {
     }
 
-    public function deleteUsario(int $id): Usuario {
-
+    public function deleteUsario(int $id): void
+    {
     }
 }
